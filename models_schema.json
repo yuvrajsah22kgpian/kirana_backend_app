@@ -1,0 +1,124 @@
+{
+  "User": {
+    "user_id": "uuid (Primary Key)",
+    "first_name": "string",
+    "last_name": "string",
+    "email": "string (unique)",
+    "password_hash": "string",
+    "phone_number": "string",
+    "address_line1": "string",
+    "address_line2": "string (optional)",
+    "city": "string",
+    "state": "string",
+    "zip_code": "string",
+    "country": "string",
+    "profile_picture_url": "string (optional)",
+    "terms_accepted_at": "timestamp",
+    "marketing_opt_in": "boolean (default: false)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)"
+  },
+  "Category": {
+    "category_id": "uuid (Primary Key)",
+    "name": "string (unique)",
+    "description": "string (optional)",
+    "parent_category_id": "uuid (self-referencing, optional)"
+  },
+  "Product": {
+    "product_id": "uuid (Primary Key)",
+    "name": "string",
+    "description": "string",
+    "price": "decimal",
+    "stock_quantity": "integer",
+    "category_id": "uuid (Foreign Key to Category)",
+    "image_url": "string",
+    "weight": "decimal (optional)",
+    "dimensions": "string (optional)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)"
+  },
+  "Order": {
+    "order_id": "uuid (Primary Key)",
+    "user_id": "uuid (Foreign Key to User)",
+    "order_date": "timestamp (default: CURRENT_TIMESTAMP)",
+    "total_amount": "decimal",
+    "currency": "string",
+    "payment_status": "enum: 'pending', 'paid', 'failed', 'refunded'",
+    "shipping_address_line1": "string",
+    "shipping_address_line2": "string (optional)",
+    "shipping_city": "string",
+    "shipping_state": "string",
+    "shipping_zip_code": "string",
+    "shipping_country": "string",
+    "shipping_status": "enum: 'pending', 'shipped', 'delivered', 'cancelled'",
+    "tracking_number": "string (optional)",
+    "shipping_provider": "string (optional)",
+    "customer_rating": "integer (1-5, optional)",
+    "customer_review": "text (optional)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)"
+  },
+  "Order_Item": {
+    "order_item_id": "uuid (Primary Key)",
+    "order_id": "uuid (Foreign Key to Order)",
+    "product_id": "uuid (Foreign Key to Product)",
+    "quantity": "integer",
+    "price_at_purchase": "decimal"
+  },
+  "ShoppingCart": {
+    "cart_id": "uuid (Primary Key)",
+    "user_id": "uuid (Foreign Key to User, unique)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)"
+  },
+  "ShoppingCart_Item": {
+    "cart_item_id": "uuid (Primary Key)",
+    "cart_id": "uuid (Foreign Key to ShoppingCart)",
+    "product_id": "uuid (Foreign Key to Product)",
+    "quantity": "integer"
+  },
+  "PaymentTransaction": {
+    "transaction_id": "uuid (Primary Key)",
+    "order_id": "uuid (Foreign Key to Order, unique)",
+    "payment_gateway": "string",
+    "gateway_transaction_id": "string (unique)",
+    "amount": "decimal",
+    "currency": "string",
+    "status": "enum: 'successful', 'failed', 'pending'",
+    "transaction_date": "timestamp (default: CURRENT_TIMESTAMP)",
+    "payment_method": "string (optional)",
+    "failure_reason": "text (optional)"
+  },
+  "Admin_User": {
+    "admin_user_id": "uuid (Primary Key)",
+    "username": "string (unique)",
+    "password_hash": "string",
+    "email": "string (unique)",
+    "first_name": "string",
+    "last_name": "string",
+    "role": "enum: 'super_admin', 'order_manager', 'support_agent', 'viewer'",
+    "last_login_at": "timestamp (optional)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)"
+  },
+  "Support_Ticket": {
+    "ticket_id": "uuid (Primary Key)",
+    "user_id": "uuid (Foreign Key to User)",
+    "subject": "string",
+    "description": "text",
+    "status": "enum: 'open', 'in_progress', 'closed', 'resolved'",
+    "priority": "enum: 'low', 'medium', 'high', 'urgent'",
+    "assigned_to_admin_id": "uuid (Foreign Key to Admin_User, optional)",
+    "created_at": "timestamp (default: CURRENT_TIMESTAMP)",
+    "updated_at": "timestamp (default: CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP)",
+    "closed_at": "timestamp (optional)"
+  },
+  "Support_Message": {
+    "message_id": "uuid (Primary Key)",
+    "ticket_id": "uuid (Foreign Key to Support_Ticket)",
+    "sender_id": "string (could be user_id or admin_user_id)",
+    "sender_type": "enum: 'user', 'admin'",
+    "message_text": "text",
+    "sent_at": "timestamp (default: CURRENT_TIMESTAMP)"
+  }
+} 

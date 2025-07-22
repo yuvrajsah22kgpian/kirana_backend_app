@@ -28,18 +28,39 @@ app.get('/', (req, res) => {
   res.send('API is running');
 });
 
-async function testConnection() {
-  // Try a simple query to check connection
-  const { error } = await supabase.from('pg_tables').select('*').limit(1);
-  if (error) {
-    console.error('Failed to connect to database:', error.message);
-  } else {
-    console.log('database connected');
+// Supabase connection test function
+async function isSupabaseConnected(supabase) {
+  try {
+    const { data, error } = await supabase.from('products').select('*').limit(1);
+    return !error;
+  } catch (error) {
+    console.error('Supabase connection failed:', error);
+    return false;
   }
 }
 
-testConnection();
+// Function to start the server
+async function startServer() {
+  try {
+    // Test Supabase connection before starting the server
+    const connected = await isSupabaseConnected(supabase);
+    console.log(`Supabase Connected: ${connected ? '✅ Yes' : '❌ No'}`);
+    
+    if (!connected) {
+      console.warn('⚠️ Warning: Supabase connection failed, but server will still start');
+    }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+    // Start the server
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+      console.log(`API endpoint: http://localhost:${PORT}`);
+    });
+
+  } catch (error) {
+    console.error('Error starting server:', error);
+    process.exit(1); // Exit if there's a critical error
+  }
+}
+
+// Start the server
+startServer();
